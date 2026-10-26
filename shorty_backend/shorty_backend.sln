@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# 
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shorty_backend", "shorty_backend\shorty_backend.csproj", "{65692322-009B-4E35-88DC-F9C986A36E63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AADBA91A-3B9F-44C0-9C83-6D744FC02865}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shorty_backend.Tests", "shorty_backend.Tests\shorty_backend.Tests.csproj", "{454387F4-FC0D-4A83-A25B-F337194F2971}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65692322-009B-4E35-88DC-F9C986A36E63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65692322-009B-4E35-88DC-F9C986A36E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65692322-009B-4E35-88DC-F9C986A36E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65692322-009B-4E35-88DC-F9C986A36E63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{454387F4-FC0D-4A83-A25B-F337194F2971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{454387F4-FC0D-4A83-A25B-F337194F2971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{454387F4-FC0D-4A83-A25B-F337194F2971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{454387F4-FC0D-4A83-A25B-F337194F2971}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

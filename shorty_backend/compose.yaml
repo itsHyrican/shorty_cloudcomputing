@@ -1,0 +1,35 @@
+﻿services:
+  db:
+    image: postgres:16-alpine
+    container_name: shorty-db
+    environment:
+      POSTGRES_DB: shorty
+      POSTGRES_USER: shorty
+      POSTGRES_PASSWORD: shorty
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shorty -d shorty"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  shorty_backend:
+    image: shorty_backend
+    build:
+      context: .
+      dockerfile: shorty_backend/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      # Inside the compose network the database is reachable via the service name "db".
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=shorty;Username=shorty;Password=shorty"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

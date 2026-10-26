@@ -1,0 +1,24 @@
+@shorty_backend_HostAddress = http://localhost:5132
+
+### Create a short URL (default TTL from appsettings)
+POST {{shorty_backend_HostAddress}}/api/shorturls
+Content-Type: application/json
+
+{
+  "url": "https://www.example.com/some/very/long/path?with=params"
+}
+
+### Create a short URL with a custom TTL (seconds, capped by MaxTtlHours)
+POST {{shorty_backend_HostAddress}}/api/shorturls
+Content-Type: application/json
+
+{
+  "url": "https://www.example.com/another/page",
+  "ttlSeconds": 3600
+}
+
+### Resolve the short code (replace abc123 with the returned code)
+GET {{shorty_backend_HostAddress}}/abc123
+
+### Health check
+GET {{shorty_backend_HostAddress}}/health
