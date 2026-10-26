@@ -1,12 +1,12 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
 
+import { UrlShortenerComponent } from './components/url-shortener/url-shortener.component';
+
+/** Landing page shell of the Shorty URL shortener. */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [UrlShortenerComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected readonly title = signal('shorty_frontend');
-}
+export class App {}

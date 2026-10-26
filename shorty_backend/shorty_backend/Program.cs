@@ -8,6 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Allow the Angular frontend (different origin/port during development)
+// to call the API from the browser.
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -37,6 +44,7 @@ var app = builder.Build();
 // Served in every environment, including the containerized Production setup.
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors();
 
 // Apply pending EF Core migrations. Retries briefly so the app can come up
 // while the database container is still starting.

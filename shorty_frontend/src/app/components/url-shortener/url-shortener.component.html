@@ -1,0 +1,139 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <!-- Original-URL + action -->
+  <label for="original-url" class="sr-only">Original-URL</label>
+  <div class="flex flex-col gap-3 sm:flex-row">
+    <div class="group relative flex-1">
+      <svg
+        aria-hidden="true"
+        class="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-500 transition-colors duration-200 group-focus-within:text-indigo-400"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      </svg>
+      <input
+        id="original-url"
+        type="text"
+        inputmode="url"
+        autocomplete="off"
+        spellcheck="false"
+        formControlName="url"
+        placeholder="https://example.com/sehr/langer/link"
+        class="h-12 w-full rounded-xl border border-white/10 bg-night/70 pr-4 pl-11 text-[15px] text-slate-100 shadow-inner shadow-black/30 transition duration-200 placeholder:text-slate-600 focus:border-indigo-400/60 focus:ring-4 focus:ring-indigo-500/20 focus:outline-none"
+      />
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="isSubmitting()"
+      class="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 text-[15px] font-semibold text-white shadow-lg shadow-indigo-950/50 transition duration-200 hover:from-indigo-400 hover:to-violet-400 hover:shadow-indigo-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      @if (isSubmitting()) {
+        <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+          <path fill="currentColor" class="opacity-75" d="M12 2a10 10 0 0 1 10 10h-4a6 6 0 0 0-6-6V2z"></path>
+        </svg>
+        Wird erstellt…
+      } @else {
+        Link kürzen
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      }
+    </button>
+  </div>
+
+  @if (urlControl.touched && urlControl.hasError('required')) {
+    <p class="mt-2 text-sm text-rose-400">Bitte gib eine URL ein.</p>
+  } @else if (urlControl.touched && urlControl.hasError('invalidUrl')) {
+    <p class="mt-2 text-sm text-rose-400">Die URL muss mit http:// oder https:// beginnen.</p>
+  }
+
+  <!-- Gültigkeit (TTL) -->
+  <fieldset class="mt-6">
+    <legend class="text-sm font-medium text-slate-300">
+      Gültigkeit <span class="font-normal text-slate-500">· optional</span>
+    </legend>
+    <div role="group" aria-label="Gültigkeitsdauer wählen" class="mt-2.5 flex flex-wrap gap-2">
+      @for (option of ttlOptions; track option.label) {
+        <button
+          type="button"
+          (click)="selectTtl(option.value)"
+          [attr.aria-pressed]="selectedTtl() === option.value"
+          class="rounded-full border px-4 py-1.5 text-sm font-medium transition-all duration-200"
+          [ngClass]="{
+            'border-indigo-400/60 bg-indigo-500/20 text-indigo-200 shadow-md shadow-indigo-950/50': selectedTtl() === option.value,
+            'border-white/10 bg-white/[0.03] text-slate-400 hover:border-white/25 hover:bg-white/[0.07] hover:text-slate-200': selectedTtl() !== option.value
+          }"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </fieldset>
+</form>
+
+@if (error(); as message) {
+  <div role="alert" class="animate-fade-in-up mt-5 flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+    <svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+    <span>{{ message }}</span>
+  </div>
+}
+
+@if (result(); as shortUrl) {
+  <div role="status" class="animate-fade-in-up mt-6">
+    <app-short-url-result [shortUrl]="shortUrl" />
+  </div>
+}
+
+@if (history().length > 0) {
+  <section class="mt-8">
+    <h2 class="flex items-center gap-2 text-xs font-semibold tracking-widest text-slate-500 uppercase">
+      <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+      Letzte Links dieser Sitzung
+    </h2>
+    <ul class="mt-3 space-y-2">
+      @for (entry of history(); track entry.code; let i = $index) {
+        <li
+          class="animate-fade-in-up flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-sm transition-colors duration-200 hover:border-white/15 hover:bg-white/[0.04]"
+          [style.animation-delay.ms]="i * 60"
+        >
+          <a
+            [href]="resolveUrl(entry.shortUrl)"
+            target="_blank"
+            rel="noopener"
+            class="font-mono text-sm font-medium text-indigo-300 underline-offset-4 transition hover:text-indigo-200 hover:underline"
+          >
+            {{ entry.shortUrl }}
+          </a>
+          <span class="min-w-0 flex-1 truncate text-slate-500" [title]="entry.originalUrl">
+            {{ entry.originalUrl }}
+          </span>
+          <span class="shrink-0 text-xs whitespace-nowrap text-slate-600">bis {{ formatExpiry(entry.expiresAt) }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+}
