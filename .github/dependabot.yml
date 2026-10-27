@@ -1,0 +1,18 @@
+# Weekly dependency security scanning for both stacks.
+# Creates update PRs for packages with known vulnerabilities (advisories).
+# See docs/code-analysis-and-security.md for the handling process.
+version: 2
+updates:
+  # .NET packages of the Shorty backend.
+  - package-ecosystem: "nuget"
+    directory: "/shorty_backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  # npm packages of the Angular frontend.
+  - package-ecosystem: "npm"
+    directory: "/shorty_frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10

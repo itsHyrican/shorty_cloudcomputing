@@ -1,0 +1,55 @@
+# Static vulnerability analysis with GitHub CodeQL (Code Scanning).
+# See docs/code-analysis-and-security.md for what is checked and how findings are handled.
+name: CodeQL
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    # Weekly scan so newly published CodeQL queries run even without code changes.
+    - cron: '30 1 * * 1'
+
+permissions:
+  security-events: write
+  actions: read
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: csharp
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      # C# data extraction happens during compilation, so the solution is built
+      # explicitly between init and analyze (custom build instead of autobuild).
+      - name: Set up .NET 8
+        if: matrix.language == 'csharp'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build backend
+        if: matrix.language == 'csharp'
+        run: dotnet build shorty_backend/shorty_backend.sln --configuration Release
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
