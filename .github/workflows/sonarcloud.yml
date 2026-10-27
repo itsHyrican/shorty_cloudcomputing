@@ -22,7 +22,7 @@ jobs:
     if: ${{ secrets.SONAR_TOKEN != '' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Full history so SonarCloud can compute new-code metrics on PRs.
           fetch-depth: 0
