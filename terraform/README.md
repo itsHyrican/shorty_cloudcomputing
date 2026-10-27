@@ -180,20 +180,32 @@ Die RDS wird mit `skip_final_snapshot = true` final gelöscht (Default). Falls S
 ## Struktur
 
 ```
+Terraform lädt alle `*.tf` eines Ordners zusammen – die Aufteilung in mehrere Dateien ist rein organisatorisch und gliedert nach Baustein.
+
+```
 terraform/
 ├── README.md
 ├── .gitignore                  # ignoriert State, .terraform/, tfvars (außer *.example)
 ├── local/
-│   ├── main.tf                 # Netzwerk, DB-, Backend- & Frontend-Container
+│   ├── provider.tf             # Terraform-Konfiguration + Docker-Provider
+│   ├── network.tf              # Docker-Netzwerk
+│   ├── database.tf             # PostgreSQL-Container
+│   ├── backend.tf              # Backend-Image + Container
+│   ├── frontend.tf             # Frontend-Image + Container
 │   ├── variables.tf
 │   ├── outputs.tf
 │   └── terraform.tfvars.example
 └── aws/
-    ├── main.tf                 # VPC, SGs, RDS, EC2, EIP
+    ├── provider.tf             # Terraform-Konfiguration + AWS-Provider
+    ├── network.tf              # VPC, Subnet, Internet-Gateway
+    ├── security.tf             # Security Groups (Web + RDS)
+    ├── database.tf             # RDS PostgreSQL
+    ├── app_server.tf           # EC2-Instanz + Elastic IP
     ├── variables.tf
     ├── outputs.tf
     ├── user_data.sh.tpl        # Deploy-Skript der EC2-Instanz
     └── terraform.tfvars.example
+```
 ```
 
 ## Architektur (AWS)
