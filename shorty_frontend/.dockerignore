@@ -1,0 +1,10 @@
+# Local dev dependencies – the Dockerfile installs them itself via `npm ci`.
+# Must stay excluded: otherwise `COPY . .` overwrites the freshly installed
+# node_modules with the ones from the dev machine (wrong platform binaries).
+node_modules
+dist
+.angular
+.git
+.idea
+.vscode
+*.md

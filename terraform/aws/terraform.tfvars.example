@@ -1,0 +1,13 @@
+# Copy this file to `terraform.tfvars` and adjust as needed.
+
+#region             = "eu-central-1"
+#environment        = "dev"
+#instance_type      = "t3.small"
+#key_pair_name      = "my-ec2-key"
+#repo_url           = "https://github.com/itsHyrican/shorty_cloudcomputing.git"
+#repo_branch        = "main"
+#repo_token         = "ghp_xxx"   # only for private repositories
+#db_password        = "change-me"
+#db_instance_class  = "db.t4g.micro"
+#allowed_cidr_blocks = ["0.0.0.0/0"]
+#frontend_allowed_hosts = "localhost,127.0.0.1"  # Elastic IP wird automatisch ergänzt
