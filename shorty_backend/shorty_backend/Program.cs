@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Shorty.Configuration;
 using Shorty.Data;
 using Shorty.Services;

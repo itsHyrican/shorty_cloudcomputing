@@ -17,8 +17,7 @@ public sealed class ShortyApiFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        _postgres = new PostgreSqlBuilder()
-            .WithImage("postgres:16-alpine")
+        _postgres = new PostgreSqlBuilder("postgres:16-alpine")
             .WithDatabase("shorty")
             .WithUsername("shorty")
             .WithPassword("shorty")
