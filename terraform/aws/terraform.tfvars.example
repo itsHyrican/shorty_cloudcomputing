@@ -6,6 +6,7 @@
 #key_pair_name      = "my-ec2-key"
 #repo_url           = "https://github.com/itsHyrican/shorty_cloudcomputing.git"
 #repo_branch        = "main"
+#github_repo        = "itsHyrican/shorty_cloudcomputing"
 #repo_token         = "ghp_xxx"   # only for private repositories
 #db_password        = "change-me"
 #db_instance_class  = "db.t4g.micro"

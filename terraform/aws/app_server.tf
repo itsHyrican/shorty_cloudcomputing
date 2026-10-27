@@ -28,8 +28,10 @@ resource "aws_instance" "app" {
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.web.id]
   key_name               = var.key_pair_name != "" ? var.key_pair_name : null
+  iam_instance_profile   = aws_iam_instance_profile.ec2_app.name
 
   user_data = templatefile("${path.module}/user_data.sh.tpl", {
+    environment              = var.environment
     repo_clone_url           = var.repo_token != "" ? replace(var.repo_url, "https://", "https://x-access-token://${var.repo_token}@") : var.repo_url
     repo_branch              = var.repo_branch
     db_host                  = aws_db_instance.this.address

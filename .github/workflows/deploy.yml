@@ -1,0 +1,87 @@
+# Deploys the Shorty stack to AWS with Terraform, driven entirely by GitHub
+# Actions (OIDC – no long-lived AWS credentials stored anywhere).
+#
+# Triggers:
+#   - every push to main (plans and applies infrastructure changes),
+#   - manually via the Actions tab; "redeploy app server = yes" taints the
+#     EC2 instance so user_data re-runs (fresh clone + image builds).
+#
+# One-time prerequisites (see terraform/aws/README.md):
+#   - local bootstrap finished (state migrated into S3),
+#   - repository setting "GenerateIdToken" enabled,
+#   - secrets: AWS_ROLE_ARN, DB_PASSWORD, REPO_TOKEN.
+
+name: Deploy AWS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      redeploy_app_server:
+        description: "Replace the app server (re-runs user_data: fresh clone + image builds)"
+        type: choice
+        required: false
+        default: "no"
+        options: ["no", "yes"]
+
+# Least privilege: read the code, mint an OIDC token for the AWS login.
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-aws
+  cancel-in-progress: false
+
+env:
+  # Keep in sync with the defaults in terraform/aws/variables.tf and the
+  # backend block in provider.tf.
+  AWS_REGION: eu-central-1
+  TERRAFORM_STATE_BUCKET: shorty-dev-terraform-state
+  TERRAFORM_STATE_KEY: terraform.tfstate
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: Log in to AWS (OIDC)
+        uses: hashicorp/login@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+
+      # Fails fast (before any terraform command) when the bootstrap from
+      # terraform/aws/README.md has not been completed yet.
+      - name: Fail fast if the remote state does not exist yet
+        run: |
+          aws s3api head-object --bucket "$TERRAFORM_STATE_BUCKET" --key "$TERRAFORM_STATE_KEY" \
+            || { echo "::error::No remote state in S3 yet – finish the local bootstrap first (terraform/aws/README.md)."; exit 1; }
+
+      - name: Terraform init
+        working-directory: terraform/aws
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        working-directory: terraform/aws
+        run: terraform validate
+
+      - name: Taint app server (manual redeploy)
+        if: github.event.inputs.redeploy_app_server == 'yes'
+        working-directory: terraform/aws
+        run: terraform taint aws_instance.app
+
+      - name: Terraform plan
+        working-directory: terraform/aws
+        run: terraform plan -input=false -out=tfplan
+
+      - name: Terraform apply
+        working-directory: terraform/aws
+        run: terraform apply -input=false tfplan

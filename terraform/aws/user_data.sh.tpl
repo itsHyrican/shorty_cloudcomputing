@@ -20,6 +20,39 @@ fi
 dnf install -y docker git
 systemctl enable --now docker
 
+# --- CloudWatch agent (best effort – monitoring must never break the deploy)
+if dnf install -y amazon-cloudwatch-agent; then
+  mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
+  cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<'EOF'
+{
+  "agent": {
+    "run_as_user": "root",
+    "debug": false
+  },
+  "logs": {
+    "files": {
+      "shorty_deploy": {
+        "group_name": "/shorty/${environment}/app",
+        "stream_name": "deploy",
+        "log_files": ["/var/log/shorty-deploy.log"]
+      },
+      "shorty_containers": {
+        "group_name": "/shorty/${environment}/app",
+        "stream_name": "containers",
+        "log_files": ["/var/lib/docker/containers/*/*json.log"]
+      }
+    }
+  }
+}
+EOF
+  /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -a apply-config \
+    -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
+    -m ec2 || echo "WARNING: CloudWatch agent failed to start; continuing without log shipping."
+else
+  echo "WARNING: package amazon-cloudwatch-agent not available; skipping log shipping."
+fi
+
 # --- Source code
 REPO_DIR="/opt/shorty"
 rm -rf $${REPO_DIR}

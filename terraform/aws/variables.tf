@@ -70,6 +70,12 @@ variable "repo_branch" {
   default     = "main"
 }
 
+variable "github_repo" {
+  description = "GitHub repository (owner/name) the Actions OIDC role is restricted to."
+  type        = string
+  default     = "itsHyrican/shorty_cloudcomputing"
+}
+
 variable "repo_token" {
   description = "Optional GitHub token (PAT with `repo` scope) when the repository is private."
   type        = string
