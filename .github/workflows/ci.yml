@@ -17,6 +17,11 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       backend: ${{ steps.filter.outputs.backend }}
     steps:
+      # Required: paths-filter inspects the checked-out git repo to detect
+      # which paths changed (on push events it diffs against the previous commit).
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - uses: dorny/paths-filter@v3
         id: filter
         with:
