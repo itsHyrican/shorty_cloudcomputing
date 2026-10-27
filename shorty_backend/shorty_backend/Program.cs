@@ -67,3 +67,9 @@ for (var attempt = 1; ; attempt++)
 app.MapControllers();
 
 app.Run();
+
+// Marker class so WebApplicationFactory<Program> in the integration tests can
+// discover the application entry point from another assembly.
+public partial class Program
+{
+}

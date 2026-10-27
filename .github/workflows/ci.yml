@@ -55,7 +55,7 @@ jobs:
       - name: Production build
         run: npx ng build
 
-  backend:
+  backend-unit-tests:
     needs: changes
     if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
@@ -75,4 +75,28 @@ jobs:
         run: dotnet build shorty_backend/shorty_backend.sln --no-restore -c Release
 
       - name: Run unit tests
-        run: dotnet test shorty_backend/shorty_backend.sln --no-build -c Release --verbosity normal
+        run: dotnet test shorty_backend/shorty_backend.Tests --no-build -c Release --verbosity normal
+
+  backend-integration-tests:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore shorty_backend/shorty_backend.sln
+
+      - name: Build
+        run: dotnet build shorty_backend/shorty_backend.sln --no-restore -c Release
+
+      # Boots the full API against a real PostgreSQL container via Testcontainers;
+      # Docker is preinstalled on the runner.
+      - name: Run integration tests
+        run: dotnet test shorty_backend/shorty_backend.IntegrationTests --no-build -c Release --verbosity normal
