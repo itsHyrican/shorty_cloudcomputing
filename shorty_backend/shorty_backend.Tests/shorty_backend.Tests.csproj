@@ -15,7 +15,7 @@
     <!-- Keep EF Core Relational in sync with the main app's resolved version,
          otherwise restore picks the Npgsql provider's lower minimum (MSB3277). -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.22" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.22" />
     <PackageReference Include="Moq" Version="4.21.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
