@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="10.1.0" />
+    <PackageReference Include="coverlet.collector" Version="10.1.1" />
     <!-- Keep EF Core Relational in sync with the main app's resolved version,
          otherwise restore picks the Npgsql provider's lower minimum (MSB3277). -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.22" />
